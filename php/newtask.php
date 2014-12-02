@@ -1,19 +1,14 @@
 <?php
+include_once('utils.php');
+
 header('Content-Type: application/json');
 
 $description = $_POST['description'];
 
 if ( !isset($description) || strlen($description) < 1 )
-  exit('{ "success": false, "msg": "description missing" }');
+  exit(nope('description missing'));
 
-$db = null;
-try {
-	$db = new PDO('mysql:host=localhost;dbname=taskbear',
-                'taskbear',
-                'tb@taskqueue');
-} catch (PDOException $e) {
-	echo 'it died :(';
-}
+$db = db_conn(nope('internal issues'));
 
 $sql_statement = 'INSERT INTO Task(Description)
                   VALUES (:description)';
@@ -28,7 +23,7 @@ if ( $query->execute() ) {
          '"description": "' . $description . '" ' .
        '}';
 } else {
-  echo '{ "success": false, "msg": "other failure" }';
+  echo nope('other failure');
 }
 
 ?>
