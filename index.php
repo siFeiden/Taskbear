@@ -10,72 +10,9 @@
 <html>
   <head>
     <title>Taskbear</title>
-    <style type="text/css">
-      
-      main {
-        text-align: center;
-      }
-
-      .task, .addtask {
-        text-align: initial;
-        display: inline-flex;
-        margin: 10px 40px;
-        padding: 13px 20px;
-        box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.5);
-      }
-
-      .addtask {
-        border-top: 1px solid rgb(222, 222, 222);
-      }
-
-      .statuscheck {
-        margin: auto 0;
-        display: inline-block;
-        background-size: 100% 100%;
-      }
-
-      .todo {
-        background: #FBA504;
-      }
-
-      .done {
-        background: #15B440;
-      }
-
-      .descr_twoline {
-        min-width: 500px;
-        margin: auto 50px;
-        display: inline-block;
-      }
-
-      .description {
-        color: #333;
-        font-size: 95%;
-        font-weight: bold;
-      }
-
-      .statustext {
-        color: #595959;
-        font-size: 0.8em;
-      }
-
-      a > img {
-        display: block;
-      }
-      
-      .avatar {
-        margin: auto 0;
-        border-radius: 25%;
-        border: 1px solid rgba(0, 0, 0, 0.5);
-      }
-
-      .claimtask {
-        margin: auto 0;
-        
-      }
-    </style>
-	<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/ramda/0.8.0/ramda.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/index.css">
+  	<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/ramda/0.8.0/ramda.min.js"></script>
     <script type="text/javascript">
       var log = console.log.bind(console)
       var reload = location.reload.bind(location)
