@@ -1,10 +1,11 @@
 <?
+  include_once('php/utils.php');
   session_start();
 
   if ( !$_SESSION['isauth'] )
-    header('location: login.php');
-
+    header('Location: ./login');
 ?>
+
 <!DOCTYPE html>
 <html>
   <head>
@@ -76,14 +77,8 @@
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/ramda/0.8.0/ramda.min.js"></script>
     <script type="text/javascript">
-      /*
-        url patterns
-        /new
-        /{id}/done/?(yes|no)?
-        /{id}/claim
-
-      */
       var log = console.log.bind(console)
+      var reload = location.reload.bind(location)
 
       $(document).ready(function () {
         var checks = $('.task .statuscheck')
@@ -97,7 +92,11 @@
           $.post(url, R.I)
         }, 500))
 
-        checks.on('change', function() { $(this).parent().toggleClass('done todo') })
+        checks.on('change', function() {
+          var dad = $(this).parent()
+          dad.toggleClass('done todo')
+          dad.find('.statustext').text(this.checked ? 'Completed' : 'To be done')
+        })
 
         var new_task_handler = function (e) {
           e.preventDefault()
@@ -109,7 +108,6 @@
           var data = 'description=' + description
           console.log(data)
 
-          var reload = location.reload.bind(location)
           $.post('new', data, R.ifElse(R.prop('success'), reload, log))
           
           // optTODO create new element
@@ -117,6 +115,15 @@
 
         $('#addTask').on('click', new_task_handler)
         $('#new_descr').on('keypress', R.cond([R.propEq('keyCode', 13), new_task_handler]))
+
+        $('.claimtask').on('click', function () {
+          var dad = $(this).parent()
+          var id = dad.attr('data-id')
+          var url = id + '/claim'
+          log('claim', id, url)
+          $.post(url, '', R.ifElse(R.prop('success'), reload, log))
+          //$.post(url, '', log)
+        });
       })
 
       function debounce(func, wait) {
@@ -136,30 +143,24 @@
 	<main>
 
       <?php
-          $db = null;
-          try {
-              $db = new PDO('mysql:host=localhost;dbname=taskbear',
-                            'taskbear', 'tb@taskqueue');
-          } catch (PDOException $e) {
-              die('conn fail');
-          }
+        $db = db_conn();
 
-		      $sql_statement = 'SELECT t.Id, t.Description, t.Done, a.Name
+		    $sql_statement = 'SELECT t.Id, t.Description, t.Done, a.Name
                             FROM Task t
                             LEFT JOIN Assigned a
                             ON(a.TaskId = t.Id)';
 
-          $query = $db->prepare($sql_statement);
-          $query->execute();
+        $query = $db->prepare($sql_statement);
+        $query->execute();
 
-          $result = $query->fetchAll(PDO::FETCH_ASSOC);
+        $result = $query->fetchAll(PDO::FETCH_ASSOC);
           
-          foreach ($result as $row) {
-              $assigned = strlen($row['Name']) > 0;
-              $descr = $row['Description'];
-              $done  = $row['Done'];
-              $name  = $row['Name'];
-              $id = $row['Id'];
+        foreach ($result as $row) {
+          $assigned = strlen($row['Name']) > 0;
+          $descr = $row['Description'];
+          $done  = $row['Done'];
+          $name  = $row['Name'];
+          $id = $row['Id'];
       ?>
 
       <div class="task <?php echo $done ? 'done' : 'todo'; ?>" data-id="<?php echo $id; ?>">

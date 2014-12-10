@@ -1,12 +1,8 @@
 <?
+  include_once('php/utils.php');
+
   function authUser($mail, $pw) {
-    $db = null;
-    try {
-        $db = new PDO('mysql:host=localhost;dbname=taskbear',
-                      'taskbear', 'tb@taskqueue');
-    } catch (PDOException $e) {
-        die('conn fail');
-    }
+    $db = db_conn();
 
     $sql_statement = 'SELECT COUNT(Mail) as cnt, Name, Mail
                       FROM User
@@ -32,6 +28,10 @@
     }
   }
 
+  session_start();
+  if ( $_SESSION['isauth'] )
+    header('Location: ./');
+
 
   $mail = $_POST['mail'];
   $pw   = $_POST['password'];
@@ -52,6 +52,7 @@
     }
   }
 ?>
+
 <!DOCTYPE html>
 <html>
   <head>
@@ -89,4 +90,4 @@
 
   </body>
 </html>
-
+n

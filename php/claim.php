@@ -5,14 +5,10 @@
 
   session_start();
 
-  function nope ($message) {
-    return '{ "success": false, "msg": "' . $message . '" }'
-  }
-
   if ( $_SESSION['isauth'] ) {
     $db = db_conn(nope('internal issues'));
 
-    $id = $_POST['id'];
+    $id = $_GET['id'];
     $name = $_SESSION['name'];
 
     $sql_statement = 'INSERT INTO Assigned
@@ -24,9 +20,9 @@
 
     if ( $query->execute() ) {
       echo '{ ' .
-              '"success": true,' .
-              '"id": ' . $id .
-              '"name": ' . $name .
+              '"success": true, ' .
+              '"id": ' . $id . ', ' .
+              '"name": "' . $name . '"' .
            ' }';
     } else {
       echo nope('user invalid');

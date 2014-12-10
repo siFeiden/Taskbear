@@ -14,7 +14,7 @@ function db_conn ($msg = null) {
 }
 
 function nope ($message) {
-  return '{ "success": false, "msg": "' . $message . '" }'
+  return '{ "success": false, "msg": "' . $message . '" }';
 }
 
 
