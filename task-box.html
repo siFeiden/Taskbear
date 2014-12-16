@@ -1,0 +1,67 @@
+<link rel="import" href="components/polymer/polymer.html">
+<link rel="import" href="components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="components/paper-icon-button/paper-icon-button.html">
+  
+<polymer-element name="task-box" attributes="done dataid assigned">
+  <template>
+    <link rel="stylesheet" type="text/css" href="task-box.css">
+    <div id="wrapper" class="task {{ {todo: !done, done: done} | tokenList }}">
+
+      <paper-checkbox disabled="{{!assigned}}" checked="{{done}}" class="statuscheck"></paper-checkbox>
+
+      <div class="descr_twoline">
+        <span class="description"><content></content></span><br>
+        <span class="statustext" id="statustext">{{ done | doneToHumanReadable }}</span>
+      </div>
+
+      <template if="{{assigned}}">
+        <img width="24" height="24" class="avatar" src="avatars/avatar-{{assigned | hash | padModN(16)}}.svg" title="{{assigned}}">
+      </template>
+      <template if="{{!assigned}}">
+        <paper-icon-button icon="arrow-forward" on-tap="{{claimClick}}"></paper-icon-button>
+      </template>
+      
+    </div>
+  </template>
+  <script>
+    Polymer({
+      done: false,
+      doneToHumanReadable: function (done) {
+        return done ? 'Completed' : 'To be doge';
+      },
+      doneChanged: function () {
+        var url = this.dataid + '/done/' + (this.done ? 'yes' : 'no')
+        $.post(url, function (resp) {
+          if ( !resp.success )
+            ; // TODO something
+        })
+      },
+      dataid: -1,
+      assigned: null,
+      claimClick: function () {
+        if ( this.dataid === -1 )
+          return
+
+        var url = this.dataid + '/claim'
+        $.post(url, '', (function (resp) {
+            if ( resp.success )
+              this.assigned = resp.name
+          }).bind(this))
+
+      },
+      hash: function(str) {
+        var hash = 5381,
+            i    = str.length
+
+        while(i)
+          hash = (hash * 33) ^ str.charCodeAt(--i)
+
+        return hash >>> 0;
+      },
+      padModN: function (num, n) {
+        num = (Math.abs(num) % n);
+        return (num < 10 ? '0' : '') + num
+      }
+    });
+  </script>
+</polymer-element>

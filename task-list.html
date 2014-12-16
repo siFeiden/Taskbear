@@ -1,0 +1,43 @@
+<link rel="import" href="components/polymer/polymer.html">
+<link rel="import" href="components/core-ajax/core-ajax.html">
+<link rel="import" href="task-box.html">
+
+<polymer-element name="task-list">
+  <template>
+    <core-ajax id="ajax"
+      auto
+      url="tasks.json"
+      on-core-response="{{tasksLoaded}}"
+      handleAs="json">
+    </core-ajax>
+
+    <div layout vertical center>
+
+      <template repeat="{{task in tasks}}">
+        <task-box done="{{task.done}}" dataid="{{task.id}}" assigned="{{task.assigned}}">{{task.description}}</task-box>
+      </template>
+      
+    </div>
+  </template>
+  <script>
+    Polymer({
+      tasks: [],
+      tasksLoaded: function () {
+        this.tasks = this.$.ajax.response.slice(0)
+      },
+      addTask: function (task) {
+        var std = {
+          id: -1,
+          done: false,
+          description: '',
+          assigned: null
+        }
+        
+        $.extend(std, task)
+        this.tasks.push(task)
+
+        return task
+      }
+    })
+  </script>
+</polymer-element>
