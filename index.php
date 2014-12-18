@@ -1,3 +1,10 @@
+<?
+  include_once('php/utils.php');
+  session_start();
+  if ( !$_SESSION['isauth'] )
+    header('Location: ./login');
+?>
+
 <!DOCTYPE html>
 <html>
   <head>
@@ -14,48 +21,37 @@
     <script type="text/javascript">
       var log = console.log.bind(console)
 
-      $(document).ready(function () {
+      document.addEventListener('DOMContentLoaded', function () {
 
         function newTaskClick (e) {
           e.preventDefault()
 
-          var edit = $('#new_descr')
-          var description = edit.val().trim()
+          var edit = document.getElementById('new_descr')
+          var description = edit.value.trim()
           if ( !description )
             return
 
           edit.val('')
 
-          // var data = 'description=' + description
-          // console.log(data)
+          var data = 'description=' + encodeURIComponent(description)
 
-          // $.post('new', data, R.ifElse(R.prop('success'), reload, log))
-          
-          var task = {
-            id: Date.now(),
-            done: false,
-            description: description,
-            assigned: null
-          }
+          $.post('new', data, function (resp) {
+            if ( resp.success )
+              document.getElementById('tasklist').addTask(resp.task)
 
-          document.getElementById('tasklist').addTask(task)
+          })
         }
 
-        $('#addTask').on('click', newTaskClick)
-        $('#new_descr').on('keypress', R.cond([R.propEq('keyCode', 13), newTaskClick]), function (press) {
-          if ( press.keyCode == 13 ) {
-            newTaskClick.apply(this, arguments)
-            this.value = ''
-          }
-        })
+        document.getElementById('addTask')
+          .addEventListener('click', newTaskClick)
 
-        $('.claimtask').on('click', function () {
-          var dad = $(this).parent()
-          var id = dad.attr('data-id')
-          var url = id + '/claim'
-          log('claim', id, url)
-          $.post(url, '', R.ifElse(R.prop('success'), reload, log))
-        });
+        document.getElementById('new_descr').addEventListener('keypress',
+            R.cond([R.propEq('keyCode', 13), newTaskClick]), function (press) {
+              if ( press.keyCode == 13 ) {
+                newTaskClick.apply(this, arguments)
+                this.value = ''
+              }
+            })
       })/*
 
       function debounce(func, wait) {
@@ -79,11 +75,9 @@
       <div class="addtask">
         <paper-checkbox disabled unchecked class="statuscheck"></paper-checkbox>
         <div class="descr_twoline">
-          <!-- <input type="text" size="50" placeholder="Description" style="padding: 0 5px;"> -->
           <paper-input-decorator label="Description" style="padding: 0; font-size: 80%;">
-            <input is="core-input" id="new_descr">
+            <input is="core-input" id="new_descr" value="">
           </paper-input-decorator>
-          <!-- <paper-input label="Description" style="width: 100%;"></paper-input> -->
         </div>
         <paper-icon-button icon="add" id="addTask"></paper-icon-button>
       </div>

@@ -7,7 +7,8 @@
     <link rel="stylesheet" type="text/css" href="task-box.css">
     <div id="wrapper" class="task {{ {todo: !done, done: done} | tokenList }}">
 
-      <paper-checkbox disabled="{{!assigned}}" checked="{{done}}" class="statuscheck"></paper-checkbox>
+      <!-- Use on-tap to prevent too many AJAX requests: doneChange would be called on pageload, which creates an ajax calls to update the state for every task-box element on the site -->
+      <paper-checkbox disabled="{{!assigned}}" checked="{{done}}" class="statuscheck" on-tap="{{doneToggle}}"></paper-checkbox>
 
       <div class="descr_twoline">
         <span class="description"><content></content></span><br>
@@ -29,7 +30,7 @@
       doneToHumanReadable: function (done) {
         return done ? 'Completed' : 'To be doge';
       },
-      doneChanged: function () {
+      doneToggle: function () {
         var url = this.dataid + '/done/' + (this.done ? 'yes' : 'no')
         $.post(url, function (resp) {
           if ( !resp.success )

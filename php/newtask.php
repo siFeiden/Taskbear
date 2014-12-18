@@ -17,11 +17,17 @@ $query = $db->prepare($sql_statement);
 $query->bindValue(':description', $description);
 
 if ( $query->execute() ) {
-  echo '{ ' .
-         '"success": true, ' .
-         '"id": ' . $db->lastInsertId() . ', ' .
-         '"description": "' . $description . '" ' .
-       '}';
+  $resp = array(
+    'success' => true,
+    'task' => array(
+      'id' => intval($db->lastInsertId()),
+      'done' => 0,
+      'assigned' => null,
+      'description' => $description
+    )
+  );
+
+  echo json_encode($resp);
 } else {
   echo nope('other failure');
 }

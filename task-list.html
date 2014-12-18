@@ -6,7 +6,7 @@
   <template>
     <core-ajax id="ajax"
       auto
-      url="tasks.json"
+      url="all/"
       on-core-response="{{tasksLoaded}}"
       handleAs="json">
     </core-ajax>
@@ -26,6 +26,12 @@
         this.tasks = this.$.ajax.response.slice(0)
       },
       addTask: function (task) {
+        // overrides properties from from in into
+        function extend(into, from) {
+          for (var prop in from)
+            into[prop] = from[prop]
+        } 
+
         var std = {
           id: -1,
           done: false,
@@ -33,7 +39,7 @@
           assigned: null
         }
         
-        $.extend(std, task)
+        extend(std, task)
         this.tasks.push(task)
 
         return task
